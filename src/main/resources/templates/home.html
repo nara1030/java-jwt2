@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Menu Style -->
+    <style>
+        /* 기본 사이드 메뉴 스타일 */
+        .side-menu {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding-top: 20px;
+            position: fixed;
+            height: 100%;
+            top: 0;
+            left: 0;
+            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            z-index: 1000; /* 사이드 메뉴가 본문 위로 가도록 설정 */
+        }
+
+        .side-menu .menu-item {
+            list-style: none;
+            padding: 10px 20px;
+            border-bottom: 1px solid #34495e;
+            position: relative;
+        }
+
+        .side-menu .menu-item:hover {
+            background-color: #34495e;
+            cursor: pointer;
+        }
+
+        .side-menu .submenu {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: #34495e;
+        }
+
+        .side-menu .submenu li {
+            padding: 10px 20px;
+        }
+
+        .side-menu .submenu li:hover {
+            background-color: #16a085;
+        }
+
+        .side-menu .menu-item:hover .submenu {
+            display: block;
+        }
+
+        /* 메뉴 텍스트 스타일 */
+        .side-menu .menu-item span {
+            font-size: 18px;
+            font-weight: bold;
+            display: inline-block;
+            width: 100%;
+            color: #ecf0f1;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu .menu-item span:hover {
+            color: #1abc9c;
+        }
+
+        /* 모바일 화면에서 메뉴 숨기기 */
+        @media (max-width: 768px) {
+            .side-menu {
+                width: 200px;
+                padding-top: 10px;
+            }
+
+            .side-menu .menu-item span {
+                font-size: 16px;
+            }
+        }
+
+        /* 본문 영역에 여백 추가 */
+        body {
+            margin-left: 250px; /* 사이드 메뉴의 너비만큼 본문을 오른쪽으로 밀어줌 */
+            font-family: Arial, sans-serif;
+        }
+
+        /* 본문 제목 스타일 */
+        .content {
+            padding-top: 20px; /* 제목이 상단에 위치하도록 패딩 추가 */
+        }
+
+        /* 추가 스타일: 본문 영역이 사이드 메뉴와 겹치지 않도록 */
+        .content-wrapper {
+            padding-left: 20px;
+        }
+
+    </style>
+    <title>Home Page</title>
+</head>
+<body>
+
+<!-- 페이지 제목 -->
+<div class="content-wrapper">
+    <h1>Welcome to the Home Page</h1>
+
+    <!-- menu.html의 menuFragment 프래그먼트를 포함 -->
+    <div th:replace="~{menu :: menuFragment}"></div>
+</div>
+
+</body>
+</html>

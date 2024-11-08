@@ -1,0 +1,14 @@
+{
+  "menu": [
+    {"id":  1, "name":  "Home", "depth": 1, "parent": null, "role":  0},
+    {"id":  2, "name":  "About", "depth": 1, "parent": null, "role":  0},
+    {"id":  3, "name":  "MyPage", "depth": 1, "parent": null, "role":  1},
+    {"id":  4, "name":  "Admin", "depth": 1, "parent": null, "role":  2},
+    {"id":  5, "name":  "내 정보", "depth": 2, "parent": 3, "role":  1},
+    {"id":  6, "name":  "내 구독", "depth": 2, "parent": 3, "role":  1},
+    {"id":  7, "name":  "회원정보", "depth": 2, "parent": 4, "role":  3},
+    {"id":  8, "name":  "메뉴정보", "depth": 2, "parent": 4, "role":  3},
+    {"id":  9, "name":  "권한정보", "depth": 2, "parent": 4, "role":  3},
+    {"id":  10, "name":  "통계정보", "depth": 2, "parent": 4, "role":  2}
+  ]
+}
