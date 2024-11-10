@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/documents/thymeleaf-extras-spring-security"
+      th:fragment="topMenu">
+    <head>
+        <title>Top</title>
+    </head>
+    <body>
+        <!-- 상단 메뉴 프래그먼트 -->
+        <div class="top-menu">
+            <!--
+                인증하지 않은 사용자의 경우 authentication 객체 사용 불가
+                마찬가지로 이유로 hasRole 구문도 사용 불가
+            -->
+            <!-- 로그인하지 않은 사용자 -->
+            <div sec:authorize="!isAuthenticated()">
+                <span sec:authorize="isAnonymous()">안녕하세요, 익명님!</span>
+                <p>로그인이 필요합니다. <a href="/login">로그인</a></p>
+            </div>
+
+            <!-- 로그인한 사용자 -->
+            <div sec:authorize="isAuthenticated()">
+                <p>안녕하세요, <span sec:authentication="name"></span>님! 로그인하셨습니다.</p>
+                <span>반갑습니다, <span sec:authentication="principal.username"></span>(<span sec:authentication="principal.authorities"></span>)님!</span>
+                <!-- 로그인한 사용자가 할 수 있는 액션 (예: 로그아웃 버튼) -->
+                <a href="/logout">로그아웃</a>
+            </div>
+        </div>
+    </body>
+</html>

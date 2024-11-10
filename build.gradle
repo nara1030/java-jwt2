@@ -33,6 +33,11 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // 메뉴 공통 포함 위해 타임리프 레이아웃 추가
+//    implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
 }
 
 tasks.named('test') {

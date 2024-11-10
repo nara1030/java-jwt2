@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="menuFragment">
+    <head>
+        <title>Menu</title>
+    </head>
+    <body>
+        <div class="side-menu">
+            <!-- 메뉴 -->
+            <ul>
+                <li th:each="item : ${filteredMenus}"
+                    th:if="${item.depth == 1}"
+                    class="menu-item">
+                    <span th:text="${item.name}"></span>
+                    <ul class="submenu">
+                        <li th:each="subItem : ${filteredMenus}"
+                            th:if="${subItem.parent == item.id}">
+                            <span th:text="${subItem.name}"></span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
