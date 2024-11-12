@@ -27,6 +27,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
 
+        System.out.println("로그인 프로세스 진행");
+
         // 1. 사용자 인증
         UserDetails userDetails = userService.loadUserByUsername(username);
 

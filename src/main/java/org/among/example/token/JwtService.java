@@ -48,8 +48,9 @@ public class JwtService {
 
     // 토큰에서 사용자 정보 추출
     public String getUsername(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -57,8 +58,9 @@ public class JwtService {
 
     // 토큰 통해 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
         String username = claims.getSubject();
@@ -79,8 +81,9 @@ public class JwtService {
     }
 
     private Date extractExpiration(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();

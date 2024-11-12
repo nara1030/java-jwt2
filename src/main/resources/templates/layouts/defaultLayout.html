@@ -103,11 +103,88 @@
         }
     </style>
     <title>Layout</title>
+    <script th:inline="javascript">
+        <!-- login.html에서 사용해야 하므로 Top.html이 아니라 layout.html의 전역 스코프로 위치 수정 -->
+        // 사용자 정보가 변경될 때마다 호출하는 함수
+        function updateTopMenu(userInfo) {
+            const authStatus = document.getElementById("authStatus");
+            if (userInfo) {
+                authStatus.innerHTML = `
+                    <p>안녕하세요, ${userInfo.username}님!</p>
+                    <p>Roles: ${userInfo.roles.join(", ")}</p>
+                    <p><button id="logoutBtn">로그아웃</button></p>`;
+
+                // 로그아웃 버튼 클릭 시
+                document.getElementById("logoutBtn").addEventListener("click", function() {
+                    fetch("/logout", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // 로그아웃 성공 후 로컬 스토리지에서 토큰 및 사용자 정보 삭제
+                            localStorage.removeItem("jwtToken");
+                            localStorage.removeItem("userInfo");
+
+                            // 로그아웃 후 홈 페이지로 리디렉션
+                            window.location.href = "/";  // 또는 원하는 다른 페이지로 리디렉션
+                        } else {
+                            console.error("로그아웃 실패");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("로그아웃 처리 중 오류 발생", error);
+                    });
+                });
+            } else {
+                authStatus.innerHTML = `<p>로그인되지 않은 상태입니다.<a href="/login" >로그인</a></p>`;
+            }
+        }
+
+        // 사이드 메뉴 갱신 위한 함수
+        function updateSideMenu(filteredMenus) {
+            const sideMenus = document.getElementById("sideMenus");
+            sideMenus.innerHTML = '';  // 기존 메뉴 초기화
+
+            filteredMenus.forEach(item => {
+                if (item.depth === 1) {
+                    // 1차 메뉴 항목을 추가
+                    const menuItem = document.createElement("li");
+                    menuItem.classList.add("menu-item");
+
+                    const menuText = document.createElement("span");
+                    menuText.textContent = item.name;
+                    menuItem.appendChild(menuText);
+
+                    // 서브메뉴가 있을 경우 추가
+                    const submenu = document.createElement("ul");
+                    submenu.classList.add("submenu");
+
+                    filteredMenus.forEach(subItem => {
+                        if (subItem.parent === item.id) {
+                            const submenuItem = document.createElement("li");
+                            const submenuText = document.createElement("span");
+                            submenuText.textContent = subItem.name;
+                            submenuItem.appendChild(submenuText);
+                            submenu.appendChild(submenuItem);
+                        }
+                    });
+
+                    menuItem.appendChild(submenu);
+                    sideMenus.appendChild(menuItem);
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 
     <!-- 상단 메뉴 포함 -->
-    <div th:replace="~{fragments/top :: topMenu}"></div>
+<!--    <div th:replace="~{fragments/topSession :: topMenu}"></div>-->
+    <div th:replace="~{fragments/topToken :: topMenu}"></div>
 
     <!-- 공통 사이드 메뉴 포함 -->
     <!-- 컨트롤러에서 반환되는 화면으로부터 filteredMenus 변수 안 받아와도 그려진다? -->

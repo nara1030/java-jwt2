@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultLayout}">
+<head>
+    <!-- 로그인 성공 후 JWT 토큰 받아보기 위해 시큐리티 제공 DEFAULT 로그인 페이지가 아닌 커스텀 페이지 작성 -->
+    <title>Custom Login Page</title>
+    <style>
+        /* 전체 페이지 설정 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .input-group input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<!-- 레이아웃 상속 -->
+<div layout:fragment="content">
+    <form id="loginForm">
+        <div>
+            <label for="username">아이디</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">로그인</button>
+    </form>
+
+    <script th:inline="javascript">
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // 기본 폼 제출 동작 방지
+
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // 로그인 요청을 보낼 데이터 (아이디, 비밀번호)
+            var loginData = {
+                username: username,
+                password: password
+            };
+
+            // 로그인 요청을 보내는 AJAX
+            fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(loginData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 로그인 성공, Authorization 헤더에서 토큰 추출
+                    const token = response.headers.get("Authorization").split(" ")[1];  // "Bearer <token>"에서 <token> 추출
+                    localStorage.setItem("jwtToken", token);  // 로컬 스토리지에 JWT 토큰 저장
+
+                    fetch("/userinfo", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Accept": "application/json"  // Accept 헤더 추가
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        localStorage.setItem("userInfo", JSON.stringify(data));  // 로컬 스토리지에 문자열로 사용자 정보 저장
+                        updateTopMenu(data); // 저장된 사용자 정보를 바탕으로 상단/사이드 메뉴 업데이트
+
+                        window.location.href = "/";  // 로그인 성공 후 홈 페이지로 리디렉션
+                    })
+                    .catch(error => {
+                        localStorage.setItem("userInfo", null); // 로그인 상태 확인 실패
+                    });
+                } else {
+                    throw new Error('로그인 실패');
+                }
+            })
+            .catch(error => {
+                alert("로그인 실패: " + error.message);
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>

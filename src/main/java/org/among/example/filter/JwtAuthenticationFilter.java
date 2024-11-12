@@ -30,7 +30,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = jwtService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            return; // 토큰이 유효하면 로그인 필터가 아니라 컨트롤러로 바로 이동
+            // 토큰이 유효하면 로그인 필터(UsernamePasswordAuthenticationFilter) 및 토큰 생성 필터 실행 방지 필요(스프링 시큐리티 기본 로그인 사용 시)
+            // 단, return문 사용 시 컨트롤러(UserController) 안 타서 해당 필터에 분기 사용
+            // 시큐리티 로그인 사용: JwtAutehnticationFilter > UsernamePasswordAuthenticationFilter > JwtGenerationFilter
+            // 커스텀 로그인 사용: JwtAutehnticationFilter > JwtGenerationFilter > LoginController
+//            return;
         }
 
         filterChain.doFilter(request, response);
