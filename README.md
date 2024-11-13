@@ -79,7 +79,9 @@
      커스텀 로그인 사용: JwtAutehnticationFilter > JwtGenerationFilter > LoginController
    커스텀 로그인 테스트로 검증된 토큰의 경우 토큰 다음 단계를 건너 뛰고자 바로 컨트롤러(임의의 API)로 이동하고자
    return문을 사용했으나 아예 다음 단계가 모두 실행이 안 되었다.
-   return문을 쓰더라도 filterChain.doFilter 메소드 호출 뒤에 호출하고, 해당 필터의 실행 유무는 그 필터에서 분기 걸어줬다.
+   (return문을 쓰더라도 filterChain.doFilter 메소드 호출 뒤에 호출하고, 해당 필터의 실행 유무는 그 필터에서 분기 걸어줬다.)
+   참고로 permitAll 메소드의 경우, Spring Security에서 인증 관련 필터가 동작하지 않도록 처리한다고 한다.
+   (다만, JwtAuthenticationFilter와 같은 커스텀 필터 등 인증 외 작업을 처리하는 필터는 여전히 동작한다.)
 5. Resolved [org.springframework.web.HttpMediaTypeNotAcceptableException: No acceptable representation]
    작은 부분인데 클라이언트에서 response.json() 사용하려면,
    응답으로 반환해주는 DTO에서 GETTER가 필수이다.
@@ -87,8 +89,13 @@
 ----
 A. Provider를 여러 개 두어서 인증 시 비밀번호, 지문 등 여러 개를 놔둘 수도 있다고 하는데 이는 추후 구현해보고 싶다.
    support 등 메소드 사용법 정확히 몰라서..
-B. Chat GPT 없었으면 코드를 빨리 짤 수 있었을까 싶다.
-   나처럼 내향적이고, 주변에 개발자가 많이 없는 사람에게 엄청난 시니어가 옆에서 조언해주는 것 같은 느낌을 받게 해주다니..
+B. 토큰 기반인데, 토큰 검증 및 로그인 이후에 SecurityContext에 Authentication 저장할 필요가 있을까 싶었는데,
+   많은 예제에서 그렇게 해주는 걸 보고 찾아보니 다음 이유가 있었다.
+     SecurityContextHolder에 저장된 정보는 Spring Security의
+       필터 체인이나 서비스, 컨트롤러에서 자동으로 참조하므로 데이터 일관성을 위해 저장
+     Spring Security의 어노테이션 기반 권한 부여(@PreAuthorize, @Secured 등)는
+       SecurityContextHolder에 저장된 인증 정보를 바탕으로 동작
+       (Authentication 객체가 저장되어 있어야 해당 기능들이 제대로 작동)
 C. 현재 4개의 권한이 있고, 방문객 권한으로 ANONYMOUS가 있는데 이는 원래 UNREGISTERED였다.
    시큐리티가 ANONYMOUS가 아니면 못 읽는 거 같아서 수정해주었는데 원래 하고 싶었던 건 아니었다...
 D. 용어가 맞는지 모르겠으나, 역할보다 세부적인 권한 정보(WRITE, READ 등)도 사용해보고 싶다.
